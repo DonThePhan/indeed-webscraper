@@ -1,12 +1,15 @@
 from bs4 import BeautifulSoup
 from bs4.element import Comment
+import csv
 
 import cloudscraper
 from time import sleep
 import random
 
 scraper = cloudscraper.create_scraper(browser='chrome')
-indeed_url = 'https://ca.indeed.com/jobs?q=developer&l=downtown+toronto+ontario&fromage=1'
+
+INDEED_URL = 'https://ca.indeed.com/jobs?q=developer&l=downtown+toronto+ontario&fromage=1'
+PAGES = 2
 
 
 def mock_scrape(file_name):
@@ -91,21 +94,30 @@ def tag_visible(element):
 
 
 def scan():
-    links = find_links(indeed_url)
     valid_hits = []
-    for link in links:
-        result = scrape_individual_post(link)
-        if result:
-            print(result)
-            valid_hits.append(result)
-        else:
-            print('dismissed')
 
-        sleep(1 + random.uniform(0, 1))
+    for page in range(PAGES):
+        links = find_links(f'{INDEED_URL}start={page * 10}')
+        for link in links:
+            result = scrape_individual_post(link)
+            if result:
+                valid_hits.append(result)
+            else:
+                pass
 
-    print(valid_hits)
+            sleep(1 + random.uniform(0, 1))
+
+    return valid_hits
 
 
-# scan()
-data = [{'title': 'Associate Developer (Entry Level): Toronto/Calgary/Ottawa', 'company': 'IBM', 'location': 'Toronto, ON', 'url': 'https://ca.indeed.com/rc/clk?jk=6c1456992f5618b4&fccid=de71a49b535e21cb&vjs=3'}, {'title': 'Full Stack Developer', 'company': 'Payfare Inc', 'location': 'Toronto, ON', 'url': 'https://ca.indeed.com/company/Payfare-Inc/jobs/Full-Stack-Developer-6e1bedb1aed05169?fccid=ed6e242a00daa6e1&vjs=3'}, {'title': 'Full Stack Developer', 'company': 'Interaptix', 'location': 'Toronto, ON', 'url': 'https://ca.indeed.com/rc/clk?jk=caa70d4c6ad6b57b&fccid=90690727895dfd26&vjs=3'}, {'title': 'Software Developer, Frontend', 'company': 'Hootsuite', 'location': 'Toronto, ON', 'url': 'https://ca.indeed.com/rc/clk?jk=dd630bec2ced9d3f&fccid=cc35cdc10c90c921&vjs=3'}, {'title': 'Software Developer in Test', 'company': 'Auvik Networks', 'location': 'Toronto, ON', 'url': 'https://ca.indeed.com/rc/clk?jk=3086788587de2e96&fccid=f21f075945cd8f21&vjs=3'}]
+data = scan()
 
+# write all postings to cvs so I can copy and paste into my job log
+with open('postings.csv', 'w') as csvfile:
+    fieldnames = ['company', 'title', 'url', 'location']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+    writer.writeheader()
+
+    for entry in data:
+        writer.writerow({'company': entry['company'], 'title': entry['title'], 'url': entry['url'], 'location': entry['location']})

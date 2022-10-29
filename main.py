@@ -97,7 +97,7 @@ def scan():
     valid_hits = []
 
     for page in range(PAGES):
-        links = find_links(f'{INDEED_URL}start={page * 10}')
+        links = find_links(f'{INDEED_URL}&start={page * 10}')
         for link in links:
             result = scrape_individual_post(link)
             if result:
@@ -112,7 +112,7 @@ def scan():
 
 data = scan()
 
-# write all postings to cvs so I can copy and paste into my job log
+# write all postings to cvs, so I can copy and paste into my job log
 with open('postings.csv', 'w') as csvfile:
     fieldnames = ['company', 'title', 'url', 'location']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)

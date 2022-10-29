@@ -26,7 +26,7 @@ def scrape(url):
 
 
 def find_links(url):
-    # html = mock_scrape('staticBaseSearch.html').find(class_="jobsearch-ResultsList").find_all(recursive=False)
+    # html = mock_scrape('testBaseSearch.html').find(class_="jobsearch-ResultsList").find_all(recursive=False)
     html = scrape(url).find(class_="jobsearch-ResultsList").find_all(recursive=False)
 
     links_arr = []
@@ -39,7 +39,7 @@ def find_links(url):
 
 
 def scrape_individual_post(url):
-    # html = mock_scrape('staticJobDescription.html')
+    # html = mock_scrape('testJobDescription.html')
     html = scrape(url)
 
     job_title = None

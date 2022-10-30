@@ -72,7 +72,7 @@ def scrape_individual_post(url):
         pass
 
     html_job_description = html.find(id='jobDescriptionText')
-    html_job_description_text = text_from_html(html_job_description)
+    html_job_description_text = text_from_html_lowercase(html_job_description)
 
     if job_description_pass(html_job_description_text):
         skills = generate_skills(html_job_description_text)
@@ -138,10 +138,10 @@ def job_description_pass(html_job_description_text):
     return True
 
 
-def text_from_html(html):
+def text_from_html_lowercase(html):
     texts = html.findAll(text=True)
     visible_texts = filter(tag_visible, texts)
-    return u" ".join(t.strip() for t in visible_texts)
+    return u" ".join(t.strip() for t in visible_texts).lower()
 
 
 def tag_visible(element):

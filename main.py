@@ -9,7 +9,7 @@ import random
 scraper = cloudscraper.create_scraper(browser='chrome')
 
 INDEED_URL = 'https://ca.indeed.com/jobs?q=developer&l=downtown+toronto+ontario&fromage=1'
-PAGES = 2
+PAGES = 1
 
 
 def mock_scrape(file_name):
@@ -110,14 +110,21 @@ def scan():
     return valid_hits
 
 
-data = scan()
+def write_to_csv(data):
+    # write all postings to cvs, so I can copy and paste into my job log
+    with open('postings.csv', 'w') as csvfile:
+        fieldnames = ['company', 'title', 'url', 'location']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-# write all postings to cvs, so I can copy and paste into my job log
-with open('postings.csv', 'w') as csvfile:
-    fieldnames = ['company', 'title', 'url', 'location']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
 
-    writer.writeheader()
+        for entry in data:
+            writer.writerow({'company': entry['company'], 'title': entry['title'], 'url': entry['url'], 'location': entry['location']})
 
-    for entry in data:
-        writer.writerow({'company': entry['company'], 'title': entry['title'], 'url': entry['url'], 'location': entry['location']})
+
+def run():
+    data = scan()
+    write_to_csv(data)
+
+
+run()

@@ -10,7 +10,11 @@ import random
 scraper = cloudscraper.create_scraper(browser='chrome')
 
 INDEED_URL = 'https://ca.indeed.com/jobs?q=developer&l=downtown+toronto+ontario&fromage=1'
-PAGES = 3
+PAGES = 5
+TITLE_DISMISS = ['sr', 'senior']
+DESCRIPTION_DISMISS = ['enrolled', '3-', '4-', '5-', '6-', '7-', '8-', '9-', '10-', '3 years', '4 years', '5 years',
+                       '6 years', '7 years', '8 years', '9 years', '10 years', '3+', '4+', '5+', '6+', '7+', '8+', '9+',
+                       '10+', '11+', '12+', '13+', '14+', '15+']
 
 
 def mock_scrape(file_name):
@@ -49,6 +53,11 @@ def scrape_individual_post(url):
 
     try:
         job_title = html.find(class_='jobsearch-JobInfoHeader-title-container').get_text()
+
+        # check for red flags in job title
+        for dismiss_word in TITLE_DISMISS:
+            if dismiss_word in job_title.lower():
+                return False
     except AttributeError:
         pass
 
@@ -123,11 +132,7 @@ def generate_skills(html_job_description_text):
 
 
 def job_description_pass(html_job_description_text):
-    dismiss_list = ['enrolled', '3-', '4-', '5-', '6-', '7-', '8-', '9-', '10-', '3 years', '4 years', '5 years',
-                    '6 years', '7 years', '8 years', '9 years', '10 years', '3+', '4+', '5+', '6+', '7+', '8+', '9+',
-                    '10+', '11+', '12+', '13+', '14+', '15+']
-
-    if any(dismissible in html_job_description_text for dismissible in dismiss_list):
+    if any(dismissible in html_job_description_text for dismissible in DESCRIPTION_DISMISS):
         return False
 
     return True

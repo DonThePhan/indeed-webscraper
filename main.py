@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 import csv
+from skills_list import skills_list
 
 import cloudscraper
 from time import sleep
@@ -39,8 +40,8 @@ def find_links(url):
 
 
 def scrape_individual_post(url):
-    html = mock_scrape('testJobDescription.html')
-    # html = scrape(url)
+    # html = mock_scrape('testJobDescription.html')
+    html = scrape(url)
 
     job_title = None
     company = None
@@ -62,20 +63,28 @@ def scrape_individual_post(url):
         pass
 
     html_job_description = html.find(id='jobDescriptionText')
+    html_job_description_text = text_from_html(html_job_description)
 
-    if job_description_pass(html_job_description):
-        return {'title': job_title, 'company': company, 'location': job_location, 'url': url}
+    if job_description_pass(html_job_description_text):
+        skills = generate_skills(html_job_description_text)
+        return {'title': job_title, 'company': company, 'location': job_location, 'url': url, 'skills': skills}
 
     return False
 
 
-def job_description_pass(html):
+def generate_skills(html_job_description):
+    skills = []
+    print(html_job_description)
+
+    return skills
+
+
+def job_description_pass(html_job_description_text):
     dismiss_list = ['enrolled', '3-', '4-', '5-', '6-', '7-', '8-', '9-', '10-', '3 years', '4 years', '5 years',
                     '6 years', '7 years', '8 years', '9 years', '10 years', '3+', '4+', '5+', '6+', '7+', '8+', '9+',
                     '10+']
 
-    html_text = text_from_html(html)
-    if any(dismissible in html_text for dismissible in dismiss_list):
+    if any(dismissible in html_job_description_text for dismissible in dismiss_list):
         return False
 
     return True
@@ -121,7 +130,8 @@ def write_to_csv(data):
         writer.writeheader()
 
         for entry in data:
-            writer.writerow({'company': entry['company'], 'title': entry['title'], 'url': entry['url'], 'location': entry['location']})
+            writer.writerow({'company': entry['company'], 'title': entry['title'], 'url': entry['url'],
+                             'location': entry['location']})
 
 
 def run():
@@ -129,5 +139,5 @@ def run():
     write_to_csv(data)
 
 
-# run()
-print(scrape_individual_post('asdfasd'))
+run()
+# print(scrape_individual_post('asdfasd'))

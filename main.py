@@ -10,7 +10,7 @@ import random
 scraper = cloudscraper.create_scraper(browser='chrome')
 
 INDEED_URL = 'https://ca.indeed.com/jobs?q=developer&l=downtown+toronto+ontario&fromage=1'
-PAGES = 2
+PAGES = 3
 
 
 def mock_scrape(file_name):
@@ -73,7 +73,6 @@ def scrape_individual_post(url):
 
 
 def check_word_valid(word, key, skills):
-
     if key not in word:
         return False
 
@@ -126,7 +125,7 @@ def generate_skills(html_job_description_text):
 def job_description_pass(html_job_description_text):
     dismiss_list = ['enrolled', '3-', '4-', '5-', '6-', '7-', '8-', '9-', '10-', '3 years', '4 years', '5 years',
                     '6 years', '7 years', '8 years', '9 years', '10 years', '3+', '4+', '5+', '6+', '7+', '8+', '9+',
-                    '10+']
+                    '10+', '11+', '12+', '13+', '14+', '15+']
 
     if any(dismissible in html_job_description_text for dismissible in dismiss_list):
         return False
@@ -156,6 +155,10 @@ def scan():
         for link in links:
             result = scrape_individual_post(link)
             if result:
+                # if we start getting repeats, finish (probably hit the last page)
+                if any(hit['url'] == result['url'] for hit in valid_hits):
+                    return valid_hits
+
                 valid_hits.append(result)
             else:
                 pass

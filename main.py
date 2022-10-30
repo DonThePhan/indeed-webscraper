@@ -72,11 +72,58 @@ def scrape_individual_post(url):
     return False
 
 
-def generate_skills(html_job_description):
-    skills = []
-    print(html_job_description)
+def check_word_valid(word, key, skills):
 
-    return skills
+    if key not in word:
+        return False
+
+    # if key IS in word
+
+    # if key is for a string (otherwise dict)
+    if isinstance(skills_list[key], str):
+        if skills_list[key] not in skills:
+            return skills_list[key]
+
+    # else we're working with a dictionary -> check if our word is just part of a larger word i.e 'unity' in 'community'
+    else:
+        skill = skills_list[key]['word']
+
+        # check if it's already in the list
+        if skill in skills:
+            return False
+
+        print('SKILL => ', skill)
+
+        # check if it's a wrong word
+        not_arr = skills_list[key]['not']
+        print('WORD & NOT_ARR=>', word, not_arr)
+        for not_word in not_arr:
+            if word in not_word:
+                return False
+
+        return skill
+
+    return False
+
+
+def generate_skills(html_job_description_text):
+    skills = []
+
+    job_description_arr = html_job_description_text.lower().split(' ')
+    print(job_description_arr)
+    for word in job_description_arr:
+        for key in skills_list:
+            valid_word = check_word_valid(word, key, skills)
+            if valid_word:
+                skills.append(valid_word)
+
+    skills_string = ''
+    for skill in skills:
+        skills_string += skill + '\n'
+
+    skills_string = skills_string[:-1]
+
+    return skills_string
 
 
 def job_description_pass(html_job_description_text):
@@ -124,14 +171,14 @@ def scan():
 def write_to_csv(data):
     # write all postings to cvs, so I can copy and paste into my job log
     with open('postings.csv', 'w') as csvfile:
-        fieldnames = ['company', 'title', 'url', 'location']
+        fieldnames = ['company', 'title', 'url', 'location', 'skills']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
 
         for entry in data:
             writer.writerow({'company': entry['company'], 'title': entry['title'], 'url': entry['url'],
-                             'location': entry['location']})
+                             'location': entry['location'], 'skills': entry['skills']})
 
 
 def run():

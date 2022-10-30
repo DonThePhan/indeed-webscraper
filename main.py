@@ -39,8 +39,8 @@ def find_links(url):
 
 
 def scrape_individual_post(url):
-    # html = mock_scrape('testJobDescription.html')
-    html = scrape(url)
+    html = mock_scrape('testJobDescription.html')
+    # html = scrape(url)
 
     job_title = None
     company = None
@@ -61,7 +61,9 @@ def scrape_individual_post(url):
     except AttributeError:
         pass
 
-    if job_description_pass(html):
+    html_job_description = html.find(id='jobDescriptionText')
+
+    if job_description_pass(html_job_description):
         return {'title': job_title, 'company': company, 'location': job_location, 'url': url}
 
     return False
@@ -127,4 +129,5 @@ def run():
     write_to_csv(data)
 
 
-run()
+# run()
+print(scrape_individual_post('asdfasd'))

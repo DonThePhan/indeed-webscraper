@@ -10,7 +10,7 @@ import random
 scraper = cloudscraper.create_scraper(browser='chrome')
 
 INDEED_URL = 'https://ca.indeed.com/jobs?q=developer&l=downtown+toronto+ontario&fromage=1'
-PAGES = 1
+PAGES = 2
 
 
 def mock_scrape(file_name):
@@ -92,11 +92,9 @@ def check_word_valid(word, key, skills):
         if skill in skills:
             return False
 
-        print('SKILL => ', skill)
-
         # check if it's a wrong word
         not_arr = skills_list[key]['not']
-        print('WORD & NOT_ARR=>', word, not_arr)
+        print('SKILL, WORD & NOT_ARR=>', skill, word, not_arr)
         for not_word in not_arr:
             if word in not_word:
                 return False
@@ -110,7 +108,6 @@ def generate_skills(html_job_description_text):
     skills = []
 
     job_description_arr = html_job_description_text.lower().split(' ')
-    print(job_description_arr)
     for word in job_description_arr:
         for key in skills_list:
             valid_word = check_word_valid(word, key, skills)

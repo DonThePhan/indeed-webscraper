@@ -31,7 +31,6 @@ def scrape(url):
 
 
 def find_links(url):
-    # html = mock_scrape('testBaseSearch.html').find(class_="jobsearch-ResultsList").find_all(recursive=False)
     html = scrape(url).find(class_="jobsearch-ResultsList").find_all(recursive=False)
 
     links_arr = []
@@ -64,10 +63,14 @@ def scrape_individual_post(url):
     try:
         company = html.find(class_='jobsearch-JobInfoHeader-subtitle').a.get_text()
     except AttributeError:
+        company = html.find(class_='jobsearch-CompanyInfoWithReview').find(class_='jobsearch-JobInfoHeader-companyName').get_text()
+    except AttributeError:
         pass
 
     try:
         job_location = html.find(class_='jobsearch-JobInfoHeader-subtitle').find_all(recursive=False)[1].get_text()
+    except AttributeError:
+        job_location = html.find(class_='jobsearch-CompanyInfoWithReview').find(class_='jobsearch-JobInfoHeader-companyLocation').get_text()
     except AttributeError:
         pass
 
@@ -102,7 +105,6 @@ def check_word_valid(word, key, skills):
 
         # check if it's a wrong word
         not_arr = skills_list[key]['not']
-        print('SKILL, WORD & NOT_ARR=>', skill, word, not_arr)
         for not_word in not_arr:
             if word in not_word:
                 return False
@@ -158,17 +160,21 @@ def scan():
     for page in range(PAGES):
         links = find_links(f'{INDEED_URL}&start={page * 10}')
         for link in links:
-            result = scrape_individual_post(link)
-            if result:
-                # if we start getting repeats, finish (probably hit the last page)
-                if any(hit['url'] == result['url'] for hit in valid_hits):
-                    return valid_hits
+            try:
+                result = scrape_individual_post(link)
+                if result:
+                    # if we start getting repeats, finish (probably hit the last page)
+                    if any(hit['url'] == result['url'] for hit in valid_hits):
+                        return valid_hits
 
-                valid_hits.append(result)
-            else:
-                pass
+                    valid_hits.append(result)
+                else:
+                    pass
+            except AttributeError:
+                return valid_hits   # if any issues, just end search
 
-            sleep(1 + random.uniform(0, 1))
+            finally:
+                sleep(1 + random.uniform(0, 1))
 
     return valid_hits
 
@@ -192,4 +198,4 @@ def run():
 
 
 run()
-# print(scrape_individual_post('asdfasd'))
+# print(scrape_individual_post('asdf'))

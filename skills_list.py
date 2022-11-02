@@ -38,6 +38,8 @@ skills_list = {'javascript': 'JavaScript ES6+',
                'photoshop': 'Photoshop',
                'marketing': 'Marketing',
                'unity': {'word': 'Unity', 'not': ['community', 'opportunity']},
+               'game': 'Unity',
+               'gaming': 'Unity',
                'postman': 'Postman',
                'communication': 'Communication',
                'collaboration': 'Collaboration',
@@ -73,7 +75,9 @@ skills_list = {'javascript': 'JavaScript ES6+',
                'crm': 'Customer Relations',
                'microsoft': 'Microsoft Technologies',
                'autocad': 'AutoCAD',
+               'graphics': '3D Graphics',
                'vscode': 'Visual Studio Code',
                'visual studio': 'Visual Studio Code',
+               'animation': 'Animation'
 
                }

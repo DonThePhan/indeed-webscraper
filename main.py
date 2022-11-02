@@ -74,8 +74,11 @@ def scrape_individual_post(url):
     except AttributeError:
         pass
 
-    html_job_description = html.find(id='jobDescriptionText')
-    html_job_description_text = text_from_html_lowercase(html_job_description)
+    try:
+      html_job_description = html.find(id='jobDescriptionText')
+      html_job_description_text = text_from_html_lowercase(html_job_description)
+    except AttributeError:
+      print("Scraping error - couldn't find job description")
 
     if job_description_pass(html_job_description_text):
         skills = generate_skills(html_job_description_text)
@@ -159,9 +162,9 @@ def scan():
 
     for page in range(PAGES):
         links = find_links(f'{INDEED_URL}&start={page * 10}')
-        for link in links:
+        for i in range(len(links)):
             try:
-                result = scrape_individual_post(link)
+                result = scrape_individual_post(links[i])
                 if result:
                     # if we start getting repeats, finish (probably hit the last page)
                     if any(hit['url'] == result['url'] for hit in valid_hits):
@@ -171,6 +174,8 @@ def scan():
                 else:
                     pass
             except AttributeError:
+                print(f'scrape unsuccessful for link {i} of {len(links)}:')
+                print(links[i])
                 return valid_hits   # if any issues, just end search
 
             finally:

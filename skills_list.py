@@ -53,6 +53,8 @@ skills_list = {'javascript': 'JavaScript ES6+',
                'rest': "RESTful API's",
                'soap': "RESTful API's",
                'api': {'word': "RESTful API's", 'not': ['rapid', 'rapidly', 'interested', 'zapier']},
+               'ajax': "AJAX",
+               'json': "JSON",
                'django': 'Django/Flask',
                'flask': 'Django/Flask',
                'frontend': 'Front-End Web Development',
@@ -78,6 +80,7 @@ skills_list = {'javascript': 'JavaScript ES6+',
                'graphics': '3D Graphics',
                'vscode': 'Visual Studio Code',
                'visual studio': 'Visual Studio Code',
-               'animation': 'Animation'
-
+               'animation': 'Animation',
+               'microsoft office': 'Microsoft Office',
+               'ms office': 'Microsoft Office',
                }

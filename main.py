@@ -43,12 +43,18 @@ def find_links(url):
 
 
 def scrape_individual_post(url):
-    # html = mock_scrape('testJobDescription.html')
-    html = scrape(url)
+    print(f'Scraping {url}')
 
     job_title = None
     company = None
     job_location = None
+
+    try:
+        # html = mock_scrape('testJobDescription.html')
+        html = scrape(url)
+    except AttributeError:
+        print("Scraping error - couldn't extract html")
+        return False
 
     try:
         job_title = html.find(class_='jobsearch-JobInfoHeader-title-container').get_text()
@@ -58,27 +64,29 @@ def scrape_individual_post(url):
             if dismiss_word in job_title.lower():
                 return False
     except AttributeError:
-        pass
+        print("Scraping error - couldn't find job title")
 
     try:
         company = html.find(class_='jobsearch-JobInfoHeader-subtitle').a.get_text()
     except AttributeError:
-        company = html.find(class_='jobsearch-CompanyInfoWithReview').find(class_='jobsearch-JobInfoHeader-companyName').get_text()
+        company = html.find(class_='jobsearch-CompanyInfoWithReview').find(
+            class_='jobsearch-JobInfoHeader-companyName').get_text()
     except AttributeError:
-        pass
+        print("Scraping error - couldn't find company")
 
     try:
         job_location = html.find(class_='jobsearch-JobInfoHeader-subtitle').find_all(recursive=False)[1].get_text()
     except AttributeError:
-        job_location = html.find(class_='jobsearch-CompanyInfoWithReview').find(class_='jobsearch-JobInfoHeader-companyLocation').get_text()
+        job_location = html.find(class_='jobsearch-CompanyInfoWithReview').find(
+            class_='jobsearch-JobInfoHeader-companyLocation').get_text()
     except AttributeError:
-        pass
+        print("Scraping error - couldn't find job location")
 
     try:
-      html_job_description = html.find(id='jobDescriptionText')
-      html_job_description_text = text_from_html_lowercase(html_job_description)
+        html_job_description = html.find(id='jobDescriptionText')
+        html_job_description_text = text_from_html_lowercase(html_job_description)
     except AttributeError:
-      print("Scraping error - couldn't find job description")
+        print("Scraping error - couldn't find job description")
 
     if job_description_pass(html_job_description_text):
         skills = generate_skills(html_job_description_text)
@@ -176,7 +184,7 @@ def scan():
             except AttributeError:
                 print(f'scrape unsuccessful for link {i} of {len(links)}:')
                 print(links[i])
-                return valid_hits   # if any issues, just end search
+                return valid_hits  # if any issues, just end search
 
             finally:
                 sleep(1 + random.uniform(0, 1))

@@ -118,7 +118,7 @@ def check_word_valid(word, key, skills):
         # check if it's a wrong word
         not_arr = skills_list[key]['not']
         for not_word in not_arr:
-            if word in not_word:
+            if word == not_word:
                 return False
 
         return skill

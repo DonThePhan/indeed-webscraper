@@ -42,6 +42,7 @@ def find_links(url):
     return links_arr
 
 
+# scrape and return only valid posts
 def scrape_individual_post(url):
     print(f'Scraping {url}')
 
